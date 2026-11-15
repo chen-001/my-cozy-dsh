@@ -33,6 +33,9 @@ function scene() {
     runScripts: 'dangerously',
   });
   const { window } = dom;
+  window.HTMLCanvasElement.prototype.getContext = function () {
+    return { createImageData(w, h) { return { data: new Uint8ClampedArray(w * h * 4) }; }, putImageData(frame) { window.lightFrame = frame; } };
+  };
   window.HTMLElement.prototype.getBoundingClientRect = function () {
     return rectFor(this, window);
   };
@@ -115,8 +118,10 @@ test('the shade beam continues softly to the lower half of the assistant column'
     let box = boxOf(flow);
     assert.equal(contains(box, shade.x, shade.y), true, JSON.stringify({ box, shade }));
     assert.equal(contains(box, land.x, land.y), true, JSON.stringify({ box, land }));
-    assert.match(flow.innerHTML, /feGaussianBlur/);
-    assert.match(flow.innerHTML, /stop-opacity="0.28"/);
+    assert.equal(flow.tagName, 'CANVAS');
+    assert.equal(beam.style.visibility, 'hidden');
+    assert.ok(window.lightFrame.data.some((v, i) => i % 4 === 3 && v > 0));
+    const priorFrame = window.lightFrame;
 
     const column = window.document.querySelector('[data-chat-flow]');
     column.setAttribute('data-rect', '420,80,480,520');
@@ -124,6 +129,7 @@ test('the shade beam continues softly to the lower half of the assistant column'
     const moved = { x: 420 + 240, y: 80 + 520 * 0.75 };
     box = boxOf(flow);
     assert.equal(contains(box, moved.x, moved.y), true, JSON.stringify({ box, moved }));
+    assert.equal(window.lightFrame, priorFrame, 'content changes must not shift or repaint the light');
     assert.equal(flow.getAttribute('data-pool'), 'desk');
     assert.equal(parseFloat(beam.style.width), 502);
   } finally {
