@@ -13,11 +13,11 @@
       "versions": [
         {
           "version": "1.0.6",
-          "publishTimestamp": 1794591951,
+          "publishTimestamp": 1794591033,
           "source": {
             "type": "git",
             "url": "https://github.com/juliiiiiiiu/my-cozy-dsh.git",
-            "commit": "3571c1a70b20f829eb4838274300159f9b62622e"
+            "commit": "05d91d7b3782c35f0c31c8a35564fe5f511f0eb0"
           }
         },
         {

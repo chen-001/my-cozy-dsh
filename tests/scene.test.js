@@ -47,6 +47,18 @@ test('version is 1.0.6 and vine copy matches the locale files', () => {
   assert.match(src, /data-pool=\\"desk\\"/);
 });
 
+test('chat width default is inherited and does not override native inline resizing', () => {
+  // Source regression check, not a browser layout or pointer-gesture test.
+  const match = read('client.js').match(/const CSS = ("(?:\\.|[^"\\])*");/);
+  assert.ok(match, 'client contains a literal theme stylesheet');
+  const css = JSON.parse(match[1]);
+  const parentRule = css.match(/div:has\(> \[data-dsh-chat-body\]\)\s*\{([^}]+)\}/);
+  assert.ok(parentRule, 'default belongs to the same parent as the host inline value');
+  assert.match(parentRule[1], /--dsh-chat-user-width:\s*min\(748px, calc\(var\(--dsh-conversation-column-width, 820px\) - 96px\)\);/);
+  assert.doesNotMatch(parentRule[1], /!important/);
+  assert.doesNotMatch(css, /\[data-dsh-chat-body\]\s*\{[^}]*--dsh-chat-user-width/);
+});
+
 test('sidebar plant, sticky bars, and hanging plant follow the scene', async () => {
   const dom = sceneDom('en');
   const { window } = dom;
