@@ -43,6 +43,8 @@ test('version is 1.0.6 and vine copy matches the locale files', () => {
   assert.match(src, /dsh-cozy-hanging-plant/);
   assert.match(src, /dsh-desk-light-v2/);
   assert.doesNotMatch(src, /dsh-desk-light-v3/);
+  assert.match(src, /dsh-lamp-flow/);
+  assert.match(src, /data-pool=\\"desk\\"/);
 });
 
 test('chat width default is inherited and does not override native inline resizing', () => {
